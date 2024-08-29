@@ -1,20 +1,28 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
+const { execSync, spawnSync } = require('child_process');
 const os = require('os');
 const path = require('path');
 const fs = require('fs');
 
 const platform = os.platform();
-const scriptPath = path.join(__dirname, 'setup-ts-project.ps1');
+const scriptPathPowershell = path.join(__dirname, 'setup-ts-project.ps1');
+const scriptPathBash = path.join(__dirname, 'setup-ts-project.sh');
 const projectNameFilePath = path.join(__dirname, 'project_name.txt');
 
 try {
     // Run the setup script based on the platform
     if (platform === 'win32') {
-        execSync(`powershell.exe -File "${scriptPath}"`, { stdio: 'inherit' });
+        execSync(`powershell.exe -File "${scriptPathPowershell}"`, { stdio: 'inherit' });
     } else {
-        execSync('bash setup-ts-project.sh', { stdio: 'inherit' });
+        const result = spawnSync('bash', [scriptPathBash], { stdio: 'inherit' });
+
+        if (result.error) {
+            throw result.error;
+        }
+        if (result.status !== 0) {
+            throw new Error(`Bash script failed with status code: ${result.status}`);
+        }
     }
 
     const projectName = fs.readFileSync(projectNameFilePath, 'utf8').trim();

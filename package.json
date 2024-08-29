@@ -1,13 +1,13 @@
 {
-  "name": "create-ts-project-cli",
-  "version": "1.0.2",
+  "name": "ts-skeleton",
+  "version": "1.0.1",
   "description": "Cross-platform script to create a TypeScript project with Node.js",
   "main": "index.js",
   "scripts": {
-    "create-ts-project-cli": "node index.js"
+    "ts-skeleton": "node index.js"
   },
   "bin": {
-    "create-ts-project-cli": "./index.js"
+    "ts-skeleton": "./index.js"
   },
   "keywords": [],
   "author": "",
