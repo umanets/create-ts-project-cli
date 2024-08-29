@@ -18,11 +18,10 @@ try {
     }
 
     const projectName = fs.readFileSync(projectNameFilePath, 'utf8').trim();
+    fs.unlinkSync(projectNameFilePath);
     console.log(`Project directory created: ${projectName}`);
     console.log(`Navigating to ${projectName} and starting the development server with nodemon and ts-node...`);
     execSync(`cd ${projectName} && npx nodemon --exec ts-node ./src/index.ts`, { stdio: 'inherit' });
-
-
 } catch (error) {
     console.error('Error occurred during setup or execution:', error);
     process.exit(1);
