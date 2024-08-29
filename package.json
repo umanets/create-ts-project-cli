@@ -1,6 +1,6 @@
 {
   "name": "create-ts-project-cli",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Cross-platform script to create a TypeScript project with Node.js",
   "main": "index.js",
   "scripts": {
