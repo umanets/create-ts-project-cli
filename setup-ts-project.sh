@@ -5,7 +5,6 @@ mkdir -p src
 
 # Initialize the project
 npm init -y
-npm install --save-dev typescript @types/node nodemon ts-node
 npx tsc --init
 
 # Create a basic index.ts file

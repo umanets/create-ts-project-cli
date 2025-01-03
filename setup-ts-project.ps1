@@ -2,7 +2,6 @@ Set-Location -Path (Get-Location) # Ensure script runs in the current directory
 mkdir src -Force
 
 npm init -y
-npm install --save-dev typescript @types/node nodemon ts-node
 npx tsc --init
 
 # Create a basic index.ts file

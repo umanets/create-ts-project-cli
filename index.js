@@ -34,6 +34,8 @@ const promptUser = async (message) => {
         process.exit(0);
     }
 
+    const browserSupport = await promptUser('Bootstrap for browser? y/[N]: ');
+
     try {
         const platform = os.platform();
         const scriptPathPowershell = path.join(__dirname, 'setup-ts-project.ps1');
@@ -69,12 +71,65 @@ const promptUser = async (message) => {
         console.log('Installing Jest dependencies...');
         execSync(`npm install --save-dev jest ts-jest @types/jest`, { stdio: 'inherit' });
 
+        const srcDir = path.join(currentDir, 'src');
+        if (!fs.existsSync(srcDir)) {
+            fs.mkdirSync(srcDir);
+        }
+
+        if (browserSupport === 'y') {
+            fs.writeFileSync(
+                path.join(currentDir, 'index.html'),
+                `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript Browser App</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="800" height="800"></canvas>
+    <div id="app">Hello World</div>
+    <script type="module" src="/src/index.ts"></script>
+</body>
+</html>`
+            );
+
+            fs.writeFileSync(
+                path.join(srcDir, 'index.ts'),
+                `document.getElementById('app')!.textContent = 'Hello, TypeScript for Browser!';`
+            );
+
+            console.log('Installing browser-specific dependencies...');
+            execSync(`npm install --save-dev typescript @types/node vite`, { stdio: 'inherit' });
+        } else {
+            execSync(`npm install --save-dev typescript @types/node nodemon ts-node`, { stdio: 'inherit' });
+            // Node.js-specific setup
+            fs.writeFileSync(
+                path.join(srcDir, 'index.ts'),
+                `console.log('Hello, TypeScript with Node.js!');`
+            );
+        }
+
         // Add "start" and "test" scripts to package.json
         const packageJsonPath = path.join(currentDir, 'package.json');
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
         packageJson.scripts = {
             ...packageJson.scripts,
-            start: 'nodemon --exec ts-node src/index.ts',
+            start:
+                browserSupport === 'y'
+                    ? `vite`
+                    : 'nodemon --exec ts-node src/index.ts',
+            build:
+                browserSupport === 'y'
+                    ? `vite build`
+                    : 'tsc',
             test: 'jest',
             debug: 'node --inspect-brk -r ts-node/register src/index.ts',
         };
